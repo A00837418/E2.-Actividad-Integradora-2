@@ -60,7 +60,7 @@ void kruskalMST() {
     parent.resize(N);
     for (int i = 0; i < N; ++i) parent[i] = i;
 
-    cout << "1.\n";
+    cout << "\n1. Árbol de expansión mínima (Kruskal):\n";
     for (const Edge& e : edges) {
         if (find(e.u) != find(e.v)) {
             unionSets(e.u, e.v);
@@ -100,9 +100,10 @@ void solveTSP() {
     visited[0] = true;
     tspUtil(path, visited, 0);
 
-    cout << "\n2.\n";
+    cout << "\n2. Recorrido más corto (TSP):\n";
     for (int v : bestPath) cout << char('A' + v) << " ";
     cout << char('A' + bestPath[0]) << "\n";
+    cout << "Costo mínimo: " << tspCost << "\n";
 }
 
 // ---------- 3. Ford-Fulkerson (Edmonds-Karp) ----------
@@ -162,15 +163,37 @@ void centralMasCercana() {
             closest = central;
         }
     }
-    cout << "\n4.\n(" << closest.first << ", " << closest.second << ")\n";
+    cout << "\n4. Central mas cercana a la casa:\n";
+    cout << "(" << closest.first << ", " << closest.second << ")\n";
+    cout << "Distancia: " << minDist << "\n";
 }
 
-// ---------- MAIN ----------
+// ---------- MAIN con menú ----------
 int main() {
-    kruskalMST();
-    solveTSP();
-    int maxFlow = fordFulkerson();
-    cout << "\n3.\n" << maxFlow << "\n";
-    centralMasCercana();
+    int opcion;
+    do {
+        cout << "\n----- MENU DE OPCIONES -----\n";
+        cout << "1. Arbol de expansion minima (Kruskal)\n";
+        cout << "2. Problema del viajante (TSP)\n";
+        cout << "3. Flujo maximo (Ford-Fulkerson)\n";
+        cout << "4. Buscar central mas cercana\n";
+        cout << "0. Salir\n";
+        cout << "Seleccione una opcion: ";
+        cin >> opcion;
+
+        switch (opcion) {
+            case 1: kruskalMST(); break;
+            case 2: solveTSP(); break;
+            case 3:
+                cout << "\n3. Flujo maximo (Ford-Fulkerson):\n";
+                cout << "Flujo maximo: " << fordFulkerson() << "\n";
+                break;
+            case 4: centralMasCercana(); break;
+            case 0: cout << "Saliendo...\n"; break;
+            default: cout << "Opcion no válida.\n"; break;
+        }
+
+    } while (opcion != 0);
+
     return 0;
 }
