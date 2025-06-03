@@ -56,7 +56,7 @@ if(ENABLE_TESTING)
     endfunction()
 
     # Archivos de pruebas
-
+        add_test_executable(test_sum test/test_sum.cpp)
 
     # Generar reportes de cobertura
     if (ENABLE_COVERAGE)
