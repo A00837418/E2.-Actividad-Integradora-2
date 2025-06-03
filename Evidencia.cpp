@@ -1,14 +1,8 @@
-#include <iostream>
-#include <vector>
-#include <tuple>
-#include <algorithm>
-#include <cmath>
-#include <climits>
-#include <queue>
+#include "utilidades.h"
 
-using namespace std;
-
+// ---------- DEFINICIONES DE VARIABLES GLOBALES ----------
 int N = 4;
+
 vector<vector<int>> adjMatrix = {
     {0, 16, 45, 32},
     {16, 0, 18, 21},
@@ -29,16 +23,11 @@ vector<pair<int, int>> centrales = {
 
 pair<int, int> nuevaCasa = {400, 300};
 
-// ---------- 1. Kruskal ----------
-struct Edge {
-    int u, v, weight;
-    bool operator<(const Edge& other) const {
-        return weight < other.weight;
-    }
-};
-
 vector<int> parent;
+int tspCost = INT_MAX;
+vector<int> bestPath;
 
+// ---------- IMPLEMENTACIONES ----------
 int find(int u) {
     if (parent[u] != u)
         parent[u] = find(parent[u]);
@@ -60,7 +49,7 @@ void kruskalMST() {
     parent.resize(N);
     for (int i = 0; i < N; ++i) parent[i] = i;
 
-    cout << "\n1. Árbol de expansión mínima (Kruskal):\n";
+    cout << "\n1. Árbol de expansión minima (Kruskal):\n";
     for (const Edge& e : edges) {
         if (find(e.u) != find(e.v)) {
             unionSets(e.u, e.v);
@@ -69,13 +58,9 @@ void kruskalMST() {
     }
 }
 
-// ---------- 2. TSP (Brute-force) ----------
-int tspCost = INT_MAX;
-vector<int> bestPath;
-
 void tspUtil(vector<int>& path, vector<bool>& visited, int currentCost) {
     if (path.size() == N) {
-        currentCost += adjMatrix[path.back()][path[0]];  // return to start
+        currentCost += adjMatrix[path.back()][path[0]];
         if (currentCost < tspCost) {
             tspCost = currentCost;
             bestPath = path;
@@ -96,21 +81,20 @@ void tspUtil(vector<int>& path, vector<bool>& visited, int currentCost) {
 
 void solveTSP() {
     vector<bool> visited(N, false);
-    vector<int> path = {0};  // start at node A
+    vector<int> path = {0};
     visited[0] = true;
     tspUtil(path, visited, 0);
 
-    cout << "\n2. Recorrido más corto (TSP):\n";
+    cout << "\n2. Recorrido mas corto (TSP):\n";
     for (int v : bestPath) cout << char('A' + v) << " ";
     cout << char('A' + bestPath[0]) << "\n";
-    cout << "Costo mínimo: " << tspCost << "\n";
+    cout << "Costo minimo: " << tspCost << "\n";
 }
 
-// ---------- 3. Ford-Fulkerson (Edmonds-Karp) ----------
 int bfs(vector<vector<int>>& rGraph, vector<int>& parent) {
     fill(parent.begin(), parent.end(), -1);
     queue<pair<int, int>> q;
-    q.push({0, INT_MAX});  // source = 0
+    q.push({0, INT_MAX});
     parent[0] = -2;
 
     while (!q.empty()) {
@@ -122,7 +106,7 @@ int bfs(vector<vector<int>>& rGraph, vector<int>& parent) {
             if (parent[next] == -1 && rGraph[cur][next] > 0) {
                 parent[next] = cur;
                 int new_flow = min(flow, rGraph[cur][next]);
-                if (next == N - 1) return new_flow;  // sink = N-1
+                if (next == N - 1) return new_flow;
                 q.push({next, new_flow});
             }
         }
@@ -132,7 +116,7 @@ int bfs(vector<vector<int>>& rGraph, vector<int>& parent) {
 
 int fordFulkerson() {
     vector<vector<int>> rGraph = capacityMatrix;
-    vector<int> parent(N);
+    parent.resize(N);
     int maxFlow = 0, flow;
 
     while ((flow = bfs(rGraph, parent)) != 0) {
@@ -148,7 +132,6 @@ int fordFulkerson() {
     return maxFlow;
 }
 
-// ---------- 4. Buscar central más cercana ----------
 double dist(pair<int, int> a, pair<int, int> b) {
     return sqrt(pow(a.first - b.first, 2) + pow(a.second - b.second, 2));
 }
@@ -168,7 +151,7 @@ void centralMasCercana() {
     cout << "Distancia: " << minDist << "\n";
 }
 
-// ---------- MAIN con menú ----------
+// ---------- MAIN ----------
 int main() {
     int opcion;
     do {
@@ -190,7 +173,7 @@ int main() {
                 break;
             case 4: centralMasCercana(); break;
             case 0: cout << "Saliendo...\n"; break;
-            default: cout << "Opcion no válida.\n"; break;
+            default: cout << "Opcion no valida.\n"; break;
         }
 
     } while (opcion != 0);
