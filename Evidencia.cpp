@@ -1,5 +1,6 @@
 
 /*
+ * Tec de Monterrey - Data Structures and Algorithms
  * Copyright (C) 2025 Tec de Monterrey
  *
  * You should have received a copy of the GNU Lesser General Public License
@@ -7,54 +8,185 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+#include "utilidades.h"
 
-#ifndef UTILIDADES_H
-#define UTILIDADES_H
+// ---------- definiciones de variables globales ----------
+int n = 4;
 
-#include <iostream>
-#include <vector>
-#include <tuple>
-#include <algorithm>
-#include <cmath>
-#include <climits>
-#include <queue>
-
-using namespace std;
-
-// ---------- VARIABLES GLOBALES ----------
-extern int n;
-extern vector<vector<int>> adj_matrix;
-extern vector<vector<int>> capacity_matrix;
-extern vector<pair<int, int>> centrales;
-extern pair<int, int> nueva_casa;
-
-// ---------- 1. Kruskal ----------
-struct edge {
-    int u, v, weight;
-    bool operator<(const edge& other) const {
-        return weight < other.weight;
-    }
+vector<vector<int>> adj_matrix = {
+    {0, 16, 45, 32},
+    {16, 0, 18, 21},
+    {45, 18, 0, 7},
+    {32, 21, 7, 0}
 };
 
-extern vector<int> parent;
+vector<vector<int>> capacity_matrix = {
+    {0, 48, 12, 18},
+    {52, 0, 42, 32},
+    {18, 46, 0, 56},
+    {24, 36, 52, 0}
+};
 
-int find(int u);
-void unionSets(int u, int v);
-void kruskalMST();
+vector<pair<int, int>> centrales = {
+    {200, 500}, {300, 100}, {450, 150}, {520, 480}
+};
 
-// ---------- 2. TSP ----------
-extern int tsp_cost;
-extern vector<int> bestPath;
+pair<int, int> nueva_casa = {400, 300};
 
-void tspUtil(vector<int>& path, vector<bool>& visited, int currentCost);
-void solveTSP();
+vector<int> parent;
+int tsp_cost = INT_MAX;
+vector<int> best_path;
 
-// ---------- 3. Ford-Fulkerson ----------
-int bfs(vector<vector<int>>& rGraph, vector<int>& parent);
-int fordFulkerson();
+// ---------- implementaciones ----------
+int find(int u) {
+    if (parent[u] != u)
+        parent[u] = find(parent[u]);
+    return parent[u];
+}
 
-// ---------- 4. Central más cercana ----------
-double dist(pair<int, int> a, pair<int, int> b);
-void centralMasCercana();
+void union_sets(int u, int v) {
+    parent[find(u)] = find(v);
+}
 
-#endif 
+void kruskal_mst() {
+    vector<edge> edges;
+    for (int i = 0; i < n; ++i)
+        for (int j = i + 1; j < n; ++j)
+            if (adj_matrix[i][j] > 0)
+                edges.push_back({i, j, adj_matrix[i][j]});
+
+    sort(edges.begin(), edges.end());
+    parent.resize(n);
+    for (int i = 0; i < n; ++i) parent[i] = i;
+
+    cout << "\n1. Árbol de expansión mínima (Kruskal):\n";
+    for (const edge& e : edges) {
+        if (find(e.u) != find(e.v)) {
+            union_sets(e.u, e.v);
+            cout << "(" << char('A' + e.u) << ", " << char('A' + e.v) << ")\n";
+        }
+    }
+}
+
+void tsp_util(vector<int>& path, vector<bool>& visited, int current_cost) {
+    if (path.size() == n) {
+        current_cost += adj_matrix[path.back()][path[0]];
+        if (current_cost < tsp_cost) {
+            tsp_cost = current_cost;
+            best_path = path;
+        }
+        return;
+    }
+
+    for (int i = 0; i < n; ++i) {
+        if (!visited[i]) {
+            visited[i] = true;
+            path.push_back(i);
+            tsp_util(path, visited, current_cost + adj_matrix[path[path.size() - 2]][i]);
+            path.pop_back();
+            visited[i] = false;
+        }
+    }
+}
+
+void solve_tsp() {
+    vector<bool> visited(n, false);
+    vector<int> path = {0};
+    visited[0] = true;
+    tsp_util(path, visited, 0);
+
+    cout << "\n2. Recorrido más corto (TSP):\n";
+    for (int v : best_path) cout << char('A' + v) << " ";
+    cout << char('A' + best_path[0]) << "\n";
+    cout << "Costo mínimo: " << tsp_cost << "\n";
+}
+
+int bfs(vector<vector<int>>& r_graph, vector<int>& parent) {
+    fill(parent.begin(), parent.end(), -1);
+    queue<pair<int, int>> q;
+    q.push({0, INT_MAX});
+    parent[0] = -2;
+
+    while (!q.empty()) {
+        int cur = q.front().first;
+        int flow = q.front().second;
+        q.pop();
+
+        for (int next = 0; next < n; ++next) {
+            if (parent[next] == -1 && r_graph[cur][next] > 0) {
+                parent[next] = cur;
+                int new_flow = min(flow, r_graph[cur][next]);
+                if (next == n - 1) return new_flow;
+                q.push({next, new_flow});
+            }
+        }
+    }
+    return 0;
+}
+
+int ford_fulkerson() {
+    vector<vector<int>> r_graph = capacity_matrix;
+    parent.resize(n);
+    int max_flow = 0, flow;
+
+    while ((flow = bfs(r_graph, parent)) != 0) {
+        max_flow += flow;
+        int cur = n - 1;
+        while (cur != 0) {
+            int prev = parent[cur];
+            r_graph[prev][cur] -= flow;
+            r_graph[cur][prev] += flow;
+            cur = prev;
+        }
+    }
+    return max_flow;
+}
+
+double dist(pair<int, int> a, pair<int, int> b) {
+    return sqrt(pow(a.first - b.first, 2) + pow(a.second - b.second, 2));
+}
+
+void central_mas_cercana() {
+    double min_dist = 1e9;
+    pair<int, int> closest;
+    for (auto& central : centrales) {
+        double d = dist(central, nueva_casa);
+        if (d < min_dist) {
+            min_dist = d;
+            closest = central;
+        }
+    }
+    cout << "\n4. Central más cercana a la casa:\n";
+    cout << "(" << closest.first << ", " << closest.second << ")\n";
+    cout << "Distancia: " << min_dist << "\n";
+}
+
+// ---------- main ----------
+int main() {
+    int opcion;
+    do {
+        cout << "\n----- MENÚ DE OPCIONES -----\n";
+        cout << "1. Árbol de expansión mínima (Kruskal)\n";
+        cout << "2. Problema del viajante (TSP)\n";
+        cout << "3. Flujo máximo (Ford-Fulkerson)\n";
+        cout << "4. Buscar central más cercana\n";
+        cout << "0. Salir\n";
+        cout << "Seleccione una opción: ";
+        cin >> opcion;
+
+        switch (opcion) {
+            case 1: kruskal_mst(); break;
+            case 2: solve_tsp(); break;
+            case 3:
+                cout << "\n3. Flujo máximo (Ford-Fulkerson):\n";
+                cout << "Flujo máximo: " << ford_fulkerson() << "\n";
+                break;
+            case 4: central_mas_cercana(); break;
+            case 0: cout << "Saliendo...\n"; break;
+            default: cout << "Opción no válida.\n"; break;
+        }
+
+    } while (opcion != 0);
+
+    return 0;
+}
