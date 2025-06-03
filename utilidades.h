@@ -1,5 +1,6 @@
 
 /*
+ * Tec de Monterrey - Data Structures and Algorithms
  * Copyright (C) 2025 Tec de Monterrey
  *
  * You should have received a copy of the GNU Lesser General Public License
@@ -7,9 +8,8 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-
-#ifndef UTILIDADES_H
-#define UTILIDADES_H
+#ifndef utilidades_h
+#define utilidades_h
 
 #include <iostream>
 #include <vector>
@@ -21,17 +21,17 @@
 
 using namespace std;
 
-// ---------- VARIABLES GLOBALES ----------
-extern int N;
-extern vector<vector<int>> adjMatrix;
-extern vector<vector<int>> capacityMatrix;
+// ---------- variables_globales ----------
+extern int n;
+extern vector<vector<int>> adj_matrix;
+extern vector<vector<int>> capacity_matrix;
 extern vector<pair<int, int>> centrales;
-extern pair<int, int> nuevaCasa;
+extern pair<int, int> nueva_casa;
 
-// ---------- 1. Kruskal ----------
-struct Edge {
+// ---------- kruskal ----------
+struct edge {
     int u, v, weight;
-    bool operator<(const Edge& other) const {
+    bool operator<(const edge& other) const {
         return weight < other.weight;
     }
 };
@@ -39,22 +39,22 @@ struct Edge {
 extern vector<int> parent;
 
 int find(int u);
-void unionSets(int u, int v);
-void kruskalMST();
+void union_sets(int u, int v);
+void kruskal_mst();
 
-// ---------- 2. TSP ----------
-extern int tspCost;
-extern vector<int> bestPath;
+// ---------- tsp ----------
+extern int tsp_cost;
+extern vector<int> best_path;
 
-void tspUtil(vector<int>& path, vector<bool>& visited, int currentCost);
-void solveTSP();
+void tsp_util(vector<int>& path, vector<bool>& visited, int current_cost);
+void solve_tsp();
 
-// ---------- 3. Ford-Fulkerson ----------
-int bfs(vector<vector<int>>& rGraph, vector<int>& parent);
-int fordFulkerson();
+// ---------- ford_fulkerson ----------
+int bfs(vector<vector<int>>& r_graph, vector<int>& parent);
+int ford_fulkerson();
 
-// ---------- 4. Central más cercana ----------
+// ---------- central_mas_cercana ----------
 double dist(pair<int, int> a, pair<int, int> b);
-void centralMasCercana();
+void central_mas_cercana();
 
 #endif
