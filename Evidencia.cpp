@@ -7,8 +7,9 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef utilidades_h
-#define utilidades_h
+
+#ifndef UTILIDADES_H
+#define UTILIDADES_H
 
 #include <iostream>
 #include <vector>
@@ -20,14 +21,14 @@
 
 using namespace std;
 
-// ---------- variables_globales ----------
+// ---------- VARIABLES GLOBALES ----------
 extern int n;
 extern vector<vector<int>> adj_matrix;
 extern vector<vector<int>> capacity_matrix;
 extern vector<pair<int, int>> centrales;
 extern pair<int, int> nueva_casa;
 
-// ---------- kruskal ----------
+// ---------- 1. Kruskal ----------
 struct edge {
     int u, v, weight;
     bool operator<(const edge& other) const {
@@ -38,22 +39,22 @@ struct edge {
 extern vector<int> parent;
 
 int find(int u);
-void union_sets(int u, int v);
-void kruskal_mst();
+void unionSets(int u, int v);
+void kruskalMST();
 
-// ---------- tsp ----------
+// ---------- 2. TSP ----------
 extern int tsp_cost;
-extern vector<int> best_path;
+extern vector<int> bestPath;
 
-void tsp_util(vector<int>& path, vector<bool>& visited, int current_cost);
-void solve_tsp();
+void tspUtil(vector<int>& path, vector<bool>& visited, int currentCost);
+void solveTSP();
 
-// ---------- ford_fulkerson ----------
-int bfs(vector<vector<int>>& r_graph, vector<int>& parent);
-int ford_fulkerson();
+// ---------- 3. Ford-Fulkerson ----------
+int bfs(vector<vector<int>>& rGraph, vector<int>& parent);
+int fordFulkerson();
 
-// ---------- central_mas_cercana ----------
+// ---------- 4. Central más cercana ----------
 double dist(pair<int, int> a, pair<int, int> b);
-void central_mas_cercana();
+void centralMasCercana();
 
-#endif
+#endif 
