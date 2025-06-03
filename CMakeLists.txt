@@ -13,7 +13,7 @@ include_directories(${CMAKE_SOURCE_DIR})
 
 # Archivos fuente principales
 set(SOURCES
-        Evidencia.cpp
+        evidencia.cpp
         utilidades.h
 )
 
