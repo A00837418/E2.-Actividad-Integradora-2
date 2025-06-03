@@ -13,10 +13,8 @@ include_directories(${CMAKE_SOURCE_DIR})
 
 # Archivos fuente principales
 set(SOURCES
-        main.cpp
-        sum.h
-        sub.h
-        div.h
+        Evidencia.cpp
+        utilidades.h
 )
 
 # Crear el ejecutable principal
@@ -58,9 +56,7 @@ if(ENABLE_TESTING)
     endfunction()
 
     # Archivos de pruebas
-    add_test_executable(test_sum test/test_sum.cpp)
-    add_test_executable(test_sub test/test_sub.cpp)
-    add_test_executable(test_divide test/test_divide.cpp)
+
 
     # Generar reportes de cobertura
     if (ENABLE_COVERAGE)
