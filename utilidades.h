@@ -141,4 +141,27 @@ public:
     static int bfs(std::vector<std::vector<int>>& r_graph, std::vector<int>& parent);
 
     /**
-     * @brief*
+     * @brief Ejecuta Ford-Fulkerson para encontrar el flujo máximo entre origen y sumidero.
+     * @return Flujo máximo total.
+     */
+    static int ford_fulkerson();
+
+    // ---------- central_mas_cercana ----------
+
+    /**
+     * @brief Calcula la distancia euclidiana entre dos puntos.
+     * @param a Punto A.
+     * @param b Punto B.
+     * @return Distancia entre `a` y `b`.
+     */
+    static double dist(std::pair<int, int> a, std::pair<int, int> b);
+
+    /**
+     * @brief Encuentra e imprime la central eléctrica más cercana a la nueva casa.
+     */
+    static void central_mas_cercana();
+};
+
+} // namespace tec_ds
+
+#endif // utilidades_h
