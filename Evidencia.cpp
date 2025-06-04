@@ -59,7 +59,7 @@ void kruskal_mst() {
     parent.resize(n);
     for (int i = 0; i < n; ++i) parent[i] = i;
 
-    cout << "\n1. Árbol de expansión mínima (Kruskal):\n";
+    cout << "\n1. arbol de expansión minima (Kruskal):\n";
     for (const edge& e : edges) {
         if (find(e.u) != find(e.v)) {
             union_sets(e.u, e.v);
@@ -95,10 +95,10 @@ void solve_tsp() {
     visited[0] = true;
     tsp_util(path, visited, 0);
 
-    cout << "\n2. Recorrido más corto (TSP):\n";
+    cout << "\n2. recorrido mas corto (TSP):\n";
     for (int v : best_path) cout << char('A' + v) << " ";
     cout << char('A' + best_path[0]) << "\n";
-    cout << "Costo mínimo: " << tsp_cost << "\n";
+    cout << "costo minimo: " << tsp_cost << "\n";
 }
 
 int bfs(vector<vector<int>>& r_graph, vector<int>& parent) {
@@ -156,34 +156,34 @@ void central_mas_cercana() {
             closest = central;
         }
     }
-    cout << "\n4. Central más cercana a la casa:\n";
+    cout << "\n4. central mas cercana a la casa:\n";
     cout << "(" << closest.first << ", " << closest.second << ")\n";
-    cout << "Distancia: " << min_dist << "\n";
+    cout << "distancia: " << min_dist << "\n";
 }
 
 // ---------- main ----------
 int main() {
     int opcion;
     do {
-        cout << "\n----- MENÚ DE OPCIONES -----\n";
-        cout << "1. Árbol de expansión mínima (Kruskal)\n";
-        cout << "2. Problema del viajante (TSP)\n";
-        cout << "3. Flujo máximo (Ford-Fulkerson)\n";
-        cout << "4. Buscar central más cercana\n";
+        cout << "\n----- MENU DE OPCIONES -----\n";
+        cout << "1. arbol de expansion minima (Kruskal)\n";
+        cout << "2. problema del viajante (TSP)\n";
+        cout << "3. flujo maximo (Ford-Fulkerson)\n";
+        cout << "4. buscar central mas cercana\n";
         cout << "0. Salir\n";
-        cout << "Seleccione una opción: ";
+        cout << "Seleccione una opcion: ";
         cin >> opcion;
 
         switch (opcion) {
             case 1: kruskal_mst(); break;
             case 2: solve_tsp(); break;
             case 3:
-                cout << "\n3. Flujo máximo (Ford-Fulkerson):\n";
-                cout << "Flujo máximo: " << ford_fulkerson() << "\n";
+                cout << "\n3. Flujo maximo (Ford-Fulkerson):\n";
+                cout << "Flujo maximo: " << ford_fulkerson() << "\n";
                 break;
             case 4: central_mas_cercana(); break;
             case 0: cout << "Saliendo...\n"; break;
-            default: cout << "Opción no válida.\n"; break;
+            default: cout << "Opcion no valida.\n"; break;
         }
 
     } while (opcion != 0);
