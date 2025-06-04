@@ -28,7 +28,10 @@ vector<vector<int>> capacity_matrix = {
 };
 
 vector<pair<int, int>> centrales = {
-    {200, 500}, {300, 100}, {450, 150}, {520, 480}
+    {200, 500},
+    {300, 100},
+    {450, 150},
+    {520, 480}
 };
 
 pair<int, int> nueva_casa = {400, 300};
@@ -39,8 +42,9 @@ vector<int> best_path;
 
 // ---------- implementaciones ----------
 int find(int u) {
-    if (parent[u] != u)
+    if (parent[u] != u) {
         parent[u] = find(parent[u]);
+    }
     return parent[u];
 }
 
@@ -50,14 +54,23 @@ void union_sets(int u, int v) {
 
 void kruskal_mst() {
     vector<edge> edges;
-    for (int i = 0; i < n; ++i)
-        for (int j = i + 1; j < n; ++j)
-            if (adj_matrix[i][j] > 0)
-                edges.push_back({i, j, adj_matrix[i][j]});
+    for (int i = 0; i < n; ++i) {
+        for (int j = i + 1; j < n; ++j) {
+            if (adj_matrix[i][j] > 0) {
+                edge e;
+                e.u = i;
+                e.v = j;
+                e.weight = adj_matrix[i][j];
+                edges.push_back(e);
+            }
+        }
+    }
 
     sort(edges.begin(), edges.end());
     parent.resize(n);
-    for (int i = 0; i < n; ++i) parent[i] = i;
+    for (int i = 0; i < n; ++i) {
+        parent[i] = i;
+    }
 
     cout << "\n1. arbol de expansión minima (Kruskal):\n";
     for (const edge& e : edges) {
@@ -82,7 +95,8 @@ void tsp_util(vector<int>& path, vector<bool>& visited, int current_cost) {
         if (!visited[i]) {
             visited[i] = true;
             path.push_back(i);
-            tsp_util(path, visited, current_cost + adj_matrix[path[path.size() - 2]][i]);
+            int prev = path[path.size() - 2];
+            tsp_util(path, visited, current_cost + adj_matrix[prev][i]);
             path.pop_back();
             visited[i] = false;
         }
@@ -91,12 +105,15 @@ void tsp_util(vector<int>& path, vector<bool>& visited, int current_cost) {
 
 void solve_tsp() {
     vector<bool> visited(n, false);
-    vector<int> path = {0};
+    vector<int> path;
+    path.push_back(0);
     visited[0] = true;
     tsp_util(path, visited, 0);
 
     cout << "\n2. recorrido mas corto (TSP):\n";
-    for (int v : best_path) cout << char('A' + v) << " ";
+    for (int v : best_path) {
+        cout << char('A' + v) << " ";
+    }
     cout << char('A' + best_path[0]) << "\n";
     cout << "costo minimo: " << tsp_cost << "\n";
 }
@@ -104,7 +121,10 @@ void solve_tsp() {
 int bfs(vector<vector<int>>& r_graph, vector<int>& parent) {
     fill(parent.begin(), parent.end(), -1);
     queue<pair<int, int>> q;
-    q.push({0, INT_MAX});
+    pair<int, int> start;
+    start.first = 0;
+    start.second = INT_MAX;
+    q.push(start);
     parent[0] = -2;
 
     while (!q.empty()) {
@@ -116,7 +136,9 @@ int bfs(vector<vector<int>>& r_graph, vector<int>& parent) {
             if (parent[next] == -1 && r_graph[cur][next] > 0) {
                 parent[next] = cur;
                 int new_flow = min(flow, r_graph[cur][next]);
-                if (next == n - 1) return new_flow;
+                if (next == n - 1) {
+                    return new_flow;
+                }
                 q.push({next, new_flow});
             }
         }
@@ -127,7 +149,8 @@ int bfs(vector<vector<int>>& r_graph, vector<int>& parent) {
 int ford_fulkerson() {
     vector<vector<int>> r_graph = capacity_matrix;
     parent.resize(n);
-    int max_flow = 0, flow;
+    int max_flow = 0;
+    int flow;
 
     while ((flow = bfs(r_graph, parent)) != 0) {
         max_flow += flow;
@@ -143,13 +166,15 @@ int ford_fulkerson() {
 }
 
 double dist(pair<int, int> a, pair<int, int> b) {
-    return sqrt(pow(a.first - b.first, 2) + pow(a.second - b.second, 2));
+    double dx = a.first - b.first;
+    double dy = a.second - b.second;
+    return sqrt(dx * dx + dy * dy);
 }
 
 void central_mas_cercana() {
     double min_dist = 1e9;
     pair<int, int> closest;
-    for (auto& central : centrales) {
+    for (pair<int, int>& central : centrales) {
         double d = dist(central, nueva_casa);
         if (d < min_dist) {
             min_dist = d;
@@ -175,15 +200,25 @@ int main() {
         cin >> opcion;
 
         switch (opcion) {
-            case 1: kruskal_mst(); break;
-            case 2: solve_tsp(); break;
+            case 1:
+                kruskal_mst();
+                break;
+            case 2:
+                solve_tsp();
+                break;
             case 3:
                 cout << "\n3. Flujo maximo (Ford-Fulkerson):\n";
                 cout << "Flujo maximo: " << ford_fulkerson() << "\n";
                 break;
-            case 4: central_mas_cercana(); break;
-            case 0: cout << "Saliendo...\n"; break;
-            default: cout << "Opcion no valida.\n"; break;
+            case 4:
+                central_mas_cercana();
+                break;
+            case 0:
+                cout << "Saliendo...\n";
+                break;
+            default:
+                cout << "Opcion no valida.\n";
+                break;
         }
 
     } while (opcion != 0);
