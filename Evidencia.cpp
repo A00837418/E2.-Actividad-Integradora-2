@@ -8,7 +8,24 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "utilidades.h"
+/*
+ * Tec de Monterrey - Data Structures and Algorithms
+ * Copyright (C) 2025 Tec de Monterrey
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program; if not, write to the Free Software Foundation,
+ * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ */
+
+#include <iostream>
+#include <vector>
+#include <queue>
+#include <algorithm>
+#include <climits>
+#include <cmath>
+#include <limits>
+
+using namespace std;
 
 // ---------- definiciones de variables globales ----------
 int n = 4;
@@ -40,7 +57,16 @@ vector<int> parent;
 int tsp_cost = INT_MAX;
 vector<int> best_path;
 
+// Definición de la estructura Edge para Kruskal
+struct Edge {
+    int u, v, weight;
+    bool operator<(const Edge& other) const {
+        return weight < other.weight;
+    }
+};
+
 // ---------- implementaciones ----------
+
 int find(int u) {
     if (parent[u] != u) {
         parent[u] = find(parent[u]);
@@ -57,11 +83,7 @@ void kruskal_mst() {
     for (int i = 0; i < n; ++i) {
         for (int j = i + 1; j < n; ++j) {
             if (adj_matrix[i][j] > 0) {
-                Edge e;
-                e.u = i;
-                e.v = j;
-                e.weight = adj_matrix[i][j];
-                edges.push_back(e);
+                edges.push_back({i, j, adj_matrix[i][j]});
             }
         }
     }
@@ -81,7 +103,6 @@ void kruskal_mst() {
     }
 }
 
-
 void tsp_util(vector<int>& path, vector<bool>& visited, int current_cost) {
     if (path.size() == n) {
         current_cost += adj_matrix[path.back()][path[0]];
@@ -96,8 +117,16 @@ void tsp_util(vector<int>& path, vector<bool>& visited, int current_cost) {
         if (!visited[i]) {
             visited[i] = true;
             path.push_back(i);
-            int prev = path[path.size() - 2];
+
+            int prev;
+            if (path.size() >= 2) {
+                prev = path[path.size() - 2];
+            } else {
+                prev = path.back();
+            }
+
             tsp_util(path, visited, current_cost + adj_matrix[prev][i]);
+
             path.pop_back();
             visited[i] = false;
         }
@@ -109,23 +138,25 @@ void solve_tsp() {
     vector<int> path;
     path.push_back(0);
     visited[0] = true;
+    tsp_cost = INT_MAX; // Reiniciar antes de resolver
+    best_path.clear();
+
     tsp_util(path, visited, 0);
 
     cout << "\n2. recorrido mas corto (TSP):\n";
     for (int v : best_path) {
         cout << char('A' + v) << " ";
     }
-    cout << char('A' + best_path[0]) << "\n";
+    if (!best_path.empty()) {
+        cout << char('A' + best_path[0]) << "\n";
+    }
     cout << "costo minimo: " << tsp_cost << "\n";
 }
 
 int bfs(vector<vector<int>>& r_graph, vector<int>& parent) {
     fill(parent.begin(), parent.end(), -1);
     queue<pair<int, int>> q;
-    pair<int, int> start;
-    start.first = 0;
-    start.second = INT_MAX;
-    q.push(start);
+    q.push({0, INT_MAX});
     parent[0] = -2;
 
     while (!q.empty()) {
@@ -166,16 +197,16 @@ int ford_fulkerson() {
     return max_flow;
 }
 
-double dist(pair<int, int> a, pair<int, int> b) {
+double dist(const pair<int, int>& a, const pair<int, int>& b) {
     double dx = a.first - b.first;
     double dy = a.second - b.second;
     return sqrt(dx * dx + dy * dy);
 }
 
 void central_mas_cercana() {
-    double min_dist = 1e9;
-    pair<int, int> closest;
-    for (pair<int, int>& central : centrales) {
+    double min_dist = numeric_limits<double>::max();
+    pair<int, int> closest = {-1, -1};
+    for (const pair<int, int>& central : centrales) {
         double d = dist(central, nueva_casa);
         if (d < min_dist) {
             min_dist = d;
@@ -198,7 +229,13 @@ int main() {
         cout << "4. buscar central mas cercana\n";
         cout << "0. Salir\n";
         cout << "Seleccione una opcion: ";
-        cin >> opcion;
+
+        // Validar entrada
+        while (!(cin >> opcion)) {
+            cout << "Entrada invalida. Intenta de nuevo: ";
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        }
 
         switch (opcion) {
             case 1:
