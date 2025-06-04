@@ -53,11 +53,11 @@ void union_sets(int u, int v) {
 }
 
 void kruskal_mst() {
-    vector<edge> edges;
+    vector<Edge> edges;
     for (int i = 0; i < n; ++i) {
         for (int j = i + 1; j < n; ++j) {
             if (adj_matrix[i][j] > 0) {
-                edge e;
+                Edge e;
                 e.u = i;
                 e.v = j;
                 e.weight = adj_matrix[i][j];
@@ -73,13 +73,14 @@ void kruskal_mst() {
     }
 
     cout << "\n1. arbol de expansión minima (Kruskal):\n";
-    for (const edge& e : edges) {
+    for (const Edge& e : edges) {
         if (find(e.u) != find(e.v)) {
             union_sets(e.u, e.v);
             cout << "(" << char('A' + e.u) << ", " << char('A' + e.v) << ")\n";
         }
     }
 }
+
 
 void tsp_util(vector<int>& path, vector<bool>& visited, int current_cost) {
     if (path.size() == n) {

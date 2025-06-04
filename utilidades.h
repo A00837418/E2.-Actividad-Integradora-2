@@ -43,13 +43,13 @@ extern pair<int, int> nueva_casa;
 /**
  * Estructura para representar una arista con peso para Kruskal.
  */
-struct edge {
+struct Edge {
     int u;      ///< Nodo origen
     int v;      ///< Nodo destino
     int weight; ///< Peso de la arista
 
     /// Comparador para ordenar aristas por peso
-    bool operator<(const edge& other) const {
+    bool operator<(const Edge& other) const {
         return weight < other.weight;
     }
 };
