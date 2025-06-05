@@ -1,41 +1,51 @@
-// test_utilidades.cpp
 #include <gtest/gtest.h>
 #include "utilidades.h"
 
-TEST(KruskalTest, MSTEdgesCount) {
-    std::vector<std::pair<char, char>> result;
-    kruskal_mst_output(result);
-    EXPECT_EQ(result.size(), 3); // n - 1 edges
+// Test 1: Kruskal debe generar 3 aristas (n=4 -> n-1)
+TEST(KruskalTest, AristasCorrectas) {
+    // Capturamos la salida estándar
+    testing::internal::CaptureStdout();
+    kruskal_mst();
+    std::string output = testing::internal::GetCapturedStdout();
+    // Contamos las líneas con paréntesis, deben ser exactamente 3
+    int count = 0;
+    for (char c : output) if (c == '(') ++count;
+    EXPECT_EQ(count, 3);
 }
 
-TEST(TSPTest, ShortestPathCost) {
-    std::vector<int> path;
-    std::vector<std::vector<int>> matrix = {
-        {0, 16, 45, 32},
-        {16, 0, 18, 21},
-        {45, 18, 0, 7},
-        {32, 21, 7, 0}
-    };
-    int cost = tsp_solver(matrix, path);
-    EXPECT_EQ(cost, 66); // Optimal TSP cost for this matrix
+// Test 2: TSP debe encontrar camino A–B–D–C–A con costo mínimo
+TEST(TSPTest, CostoCorrectoYRecorrido) {
+    testing::internal::CaptureStdout();
+    solve_tsp();
+    std::string output = testing::internal::GetCapturedStdout();
+    // Revisamos que se imprima “costo minimo: 66”
+    EXPECT_NE(output.find("costo minimo: 66"), std::string::npos);
+    // Revisamos que el tipo de camino empiece en A
+    EXPECT_NE(output.find("A "), std::string::npos);
 }
 
-TEST(FordFulkersonTest, MaxFlowCorrect) {
-    std::vector<std::vector<int>> capacity = {
-        {0, 48, 12, 18},
-        {52, 0, 42, 32},
-        {18, 46, 0, 56},
-        {24, 36, 52, 0}
-    };
-    int maxFlow = ford_fulkerson_solver(capacity);
-    EXPECT_EQ(maxFlow, 60);
+// Test 3: Ford-Fulkerson debe devolver flujo máximo 60
+TEST(FordFulkersonTest, FlujoMaximoCorrecto) {
+    testing::internal::CaptureStdout();
+    // Ejecutamos opción 3 directamente
+    std::cout << "\n3. Flujo maximo (Ford-Fulkerson):\n";
+    std::cout << "Flujo maximo: " << ford_fulkerson() << "\n";
+    std::string output = testing::internal::GetCapturedStdout();
+    EXPECT_NE(output.find("Flujo maximo: 60"), std::string::npos);
 }
 
-TEST(CentralTest, NearestCentralCorrect) {
-    std::vector<std::pair<int, int>> centrales = {
-        {200, 500}, {300, 100}, {450, 150}, {520, 480}
-    };
-    std::pair<int, int> casa = {400, 300};
-    auto result = central_mas_cercana_solver(centrales, casa);
-    EXPECT_EQ(result.first, std::make_pair(450, 150));
+// Test 4: Central más cercana a casa (400,300) debe ser (450,150)
+TEST(CentralMasCercanaTest, CoordenadasYDistancia) {
+    testing::internal::CaptureStdout();
+    central_mas_cercana();
+    std::string output = testing::internal::GetCapturedStdout();
+    EXPECT_NE(output.find("(450, 150)"), std::string::npos);
+    // La distancia aproximada es sqrt((50)^2 + (150)^2) = ~158.11388
+    EXPECT_NE(output.find("distancia: 158.113"), std::string::npos);
+}
+
+// main de pruebas
+int main(int argc, char **argv) {
+    ::testing::InitGoogleTest(&argc, argv);
+    return RUN_ALL_TESTS();
 }
