@@ -57,6 +57,7 @@ if(ENABLE_TESTING)
 
     # Archivos de pruebas
         add_test_executable(test_sum test/test_sum.cpp)
+        add_test_executable(test_utilidades test/test_utilidades.cpp)
 
     # Generar reportes de cobertura
     if (ENABLE_COVERAGE)
