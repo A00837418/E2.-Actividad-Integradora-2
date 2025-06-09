@@ -62,6 +62,9 @@ if(ENABLE_TESTING)
     # Archivos de pruebas
         add_test_executable(test_kruskal test/test_kruskal.cpp)
         add_test_executable(test_utilidades test/test_utilidades.cpp)
+        add_test_executable(test_tsp test/test_tsp.cpp)
+        add_test_executable(test_ford_fulkerson test/test_ford_fulkerson.cpp)
+        add_test_executable(test_central_cercana test/test_central_cercana.cpp)
 
     # Generar reportes de cobertura
     if (ENABLE_COVERAGE)
