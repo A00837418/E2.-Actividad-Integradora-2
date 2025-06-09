@@ -1,3 +1,4 @@
+
 /*
  * Tec de Monterrey - Data Structures and Algorithms
  * Copyright (C) 2025 Tec de Monterrey
