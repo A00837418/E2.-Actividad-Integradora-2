@@ -60,7 +60,7 @@ if(ENABLE_TESTING)
     endfunction()
 
     # Archivos de pruebas
-        add_test_executable(test_sum test/test_sum.cpp)
+        add_test_executable(test_kruskal test/test_kruskal.cpp)
         add_test_executable(test_utilidades test/test_utilidades.cpp)
 
     # Generar reportes de cobertura
