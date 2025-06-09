@@ -5,7 +5,7 @@
 #include <iostream>
 
 // Incluye tu header con la implementación
-#include "utilidades.h"
+#include "kruskal.h"
 
 // Test para la función find
 TEST(DisjointSetTest, FindRoot) {
