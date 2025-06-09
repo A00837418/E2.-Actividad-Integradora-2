@@ -1,55 +1,56 @@
-#include "central_cercana.h"
-#include <gtest/gtest.h>
-#include <sstream>
+
+/*
+ * Tec de Monterrey - Data Structures and Algorithms
+ * Copyright (C) 2025 Tec de Monterrey
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program; if not, write to the Free Software Foundation,
+ * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ */
+ 
+#ifndef CENTRAL_CERCANA_H
+#define CENTRAL_CERCANA_H
+
 #include <iostream>
+#include <vector>
+#include <cmath>
+#include <limits>
 
 using namespace std;
 
-// Helper para capturar la salida estándar
-string captureOutput(const vector<pair<int, int>>& centrales, const pair<int, int>& casa) {
-    ostringstream oss;
-    streambuf* oldCout = cout.rdbuf(oss.rdbuf()); // Redirige cout
-
-    central_mas_cercana(centrales, casa);
-
-    cout.rdbuf(oldCout); // Restaura cout
-    return oss.str();
+/**
+ * @brief Calcula la distancia euclidiana entre dos puntos en un plano 2D.
+ * 
+ * @param a Coordenadas del primer punto (par de enteros: x, y).
+ * @param b Coordenadas del segundo punto (par de enteros: x, y).
+ * @return double La distancia euclidiana entre los dos puntos.
+ */
+double dist(const pair<int, int>& a, const pair<int, int>& b) {
+    return sqrt(pow(a.first - b.first, 2) + pow(a.second - b.second, 2));
 }
 
-TEST(CentralCercanaTest, CentralMasCercanaBasico) {
-    vector<pair<int, int>> centrales = {{0, 0}, {5, 5}, {10, 10}};
-    pair<int, int> casa = {3, 4};
-
-    string salida = captureOutput(centrales, casa);
-
-    EXPECT_NE(salida.find("(0, 0)"), string::npos);
-    EXPECT_NE(salida.find("distancia"), string::npos);
+/**
+ * @brief Encuentra y muestra la central más cercana a una nueva casa.
+ * 
+ * Recorre una lista de coordenadas de centrales eléctricas y determina cuál está más cerca
+ * de la casa indicada. Imprime la central más cercana y la distancia a esta.
+ * 
+ * @param centrales Vector de pares de enteros que representan las coordenadas de las centrales.
+ * @param nueva_casa Par de enteros que representa las coordenadas de la nueva casa.
+ */
+void central_mas_cercana(const vector<pair<int, int>>& centrales, const pair<int, int>& nueva_casa) {
+    double min_dist = numeric_limits<double>::max();
+    pair<int, int> closest = {-1, -1};
+    for (const auto& central : centrales) {
+        double d = dist(central, nueva_casa);
+        if (d < min_dist) {
+            min_dist = d;
+            closest = central;
+        }
+    }
+    cout << "\n4. central mas cercana a la casa:\n";
+    cout << "(" << closest.first << ", " << closest.second << ")\n";
+    cout << "distancia: " << min_dist << "\n";
 }
 
-TEST(CentralCercanaTest, CentralUnica) {
-    vector<pair<int, int>> centrales = {{7, 8}};
-    pair<int, int> casa = {10, 12};
-
-    string salida = captureOutput(centrales, casa);
-
-    EXPECT_NE(salida.find("(7, 8)"), string::npos);
-}
-
-TEST(CentralCercanaTest, DistanciaCero) {
-    vector<pair<int, int>> centrales = {{3, 3}, {10, 10}};
-    pair<int, int> casa = {3, 3};
-
-    string salida = captureOutput(centrales, casa);
-
-    EXPECT_NE(salida.find("distancia: 0"), string::npos);
-}
-
-TEST(CentralCercanaTest, SinCentrales) {
-    vector<pair<int, int>> centrales = {};
-    pair<int, int> casa = {1, 1};
-
-    string salida = captureOutput(centrales, casa);
-
-    EXPECT_NE(salida.find("(-1, -1)"), string::npos);
-}
-
+#endif // CENTRAL_CERCANA_H
