@@ -40,12 +40,17 @@ TEST(KruskalTest, MSTOutputTest) {
     kruskal_mst(adj);
     string output = testing::internal::GetCapturedStdout();
 
-    // Esperamos 3 aristas para un grafo de 4 nodos (n-1)
+    // Contar cuántas aristas imprimió (líneas que contienen '(')
     int count = 0;
-    for (char c : output) if (c == '\n') count++;
-    EXPECT_EQ(count - 1, 3); // -1 por el encabezado impreso
+    size_t pos = 0;
+    while ((pos = output.find('(', pos)) != string::npos) {
+        count++;
+        pos++;
+    }
+    // Deben imprimirse 3 aristas para MST de 4 nodos
+    EXPECT_EQ(count, 3);
 
-    // Verifica que algunas aristas específicas estén en la salida
+    // Verificar que las aristas clave están en la salida
     EXPECT_NE(output.find("(A, B)"), string::npos);
     EXPECT_NE(output.find("(B, C)"), string::npos);
     EXPECT_NE(output.find("(C, D)"), string::npos);
