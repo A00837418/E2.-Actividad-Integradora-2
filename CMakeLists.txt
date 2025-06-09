@@ -15,6 +15,10 @@ include_directories(${CMAKE_SOURCE_DIR})
 set(SOURCES
         main.cpp
         utilidades.h
+        kruskal.h
+        tsp.h
+        ford_fulkerson.h
+        central_cercana.h
 )
 
 # Crear el ejecutable principal
