@@ -38,4 +38,18 @@ TEST(CentralCercanaOutputTest, ImprimeCentralYCercaniaCorrectamente) {
 }
 
 TEST(CentralCercanaOutputTest, ConUnaCentral) {
-    vector<pair<int,int>> centrales = { {2,2}
+    vector<pair<int,int>> centrales = { {2,2} };
+    pair<int,int> casa = {1,1};
+
+    CoutRedirect redirect;
+    central_mas_cercana(centrales, casa);
+
+    std::string salida = redirect.getString();
+
+    EXPECT_NE(salida.find("(2, 2)"), std::string::npos);
+}
+
+int main(int argc, char **argv) {
+    testing::InitGoogleTest(&argc, argv);
+    return RUN_ALL_TESTS();
+}
