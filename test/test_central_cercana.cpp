@@ -5,7 +5,7 @@
 
 using namespace std;
 
-// Helper para capturar la salida estándar
+// Función auxiliar para capturar la salida estándar
 string captureOutput(const vector<pair<int, int>>& centrales, const pair<int, int>& casa) {
     ostringstream oss;
     streambuf* oldCout = cout.rdbuf(oss.rdbuf()); // Redirige cout
@@ -22,7 +22,8 @@ TEST(CentralCercanaTest, CentralMasCercanaBasico) {
 
     string salida = captureOutput(centrales, casa);
 
-    EXPECT_NE(salida.find("(0, 0)"), string::npos);
+    // La central más cercana a (3,4) es (5,5) con distancia ≈ 2.236
+    EXPECT_NE(salida.find("(5, 5)"), string::npos);
     EXPECT_NE(salida.find("distancia"), string::npos);
 }
 
@@ -52,4 +53,3 @@ TEST(CentralCercanaTest, SinCentrales) {
 
     EXPECT_NE(salida.find("(-1, -1)"), string::npos);
 }
-
